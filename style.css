@@ -1,0 +1,196 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
+/* Reset */
+
+:root {
+    --primary: #013a63;
+    --secondary: #2a6f97;
+    --tertiary: #61a5c2;
+    --light: #a9d6e5;
+    --cream: #f7f2e6;
+    --gradient1: linear-gradient(90deg, rgba(1,58,99,1) 0%, rgba(97,165,194,1) 100%);
+
+}
+
+html {
+    box-sizing: border-box;
+    font-family: 'Rubik', sans-serif;
+    font-size: 16px;
+    color: var(--cream)
+  }
+  
+  *, *:before, *:after {
+    box-sizing: inherit;
+  }
+  
+  body, h1, h2, h3, h4, h5, h6, p, ol, ul {
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
+  }
+  
+  ol, ul {
+    list-style: none;
+  }
+  
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Main */
+  main {
+    background: var(--primary);
+    /* padding: 25px 50px; */
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(90deg, rgba(1,58,99,.2) 0%, rgba(97,165,194,.2) 100%), url('./img/ocean.jpg') no-repeat center center;
+  }
+
+  .meditation-app {
+    background: rgba(255,255,255, .3);
+    padding: 25px 50px;
+    border-radius: 20px;
+    box-shadow: 0 5px 50px 5px rgba(152, 219, 250, 0.5);
+    max-width: 95%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  } 
+
+  .meditation-app h1 {
+    color: var(--secondary);
+    padding: 10px;
+    margin-bottom: 20px;
+    position: relative;
+    text-align: center;
+  }
+
+  .meditation-app h1:before {
+    content: '';
+    position: absolute;
+    width: 60%;
+    height: 100%;
+    left: 20%;
+    border-bottom: 1px solid white
+  }
+
+  .meditation-button {
+    background: conic-gradient(var(--primary) 120deg, var(--light) 120deg 240deg, var(--secondary) 240deg);
+    width: 300px;
+    height: 300px;
+    margin: 50px 20px;
+    border-radius: 50%;
+    position: relative;
+  }
+
+  .timer-circle {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    /* background: var(--cream); */
+    border-radius: 50%;
+    top: 0%;
+    left: 0%;
+    /* animation: rotate 9s linear infinite; */
+    /* animation: rotate2 3s linear infinite */
+  } 
+
+  .timer-circle::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 0;
+    left: 50%;
+    transform: translate(-10px, -50px);
+    border-radius: 50%;
+    background-color: var(--cream);
+  }
+
+  .meditation-button .circle {
+    position: absolute;
+    background: var(--gradient1);
+    width: 85%;
+    height: 85%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .meditation-text {
+    font-style: italic;
+    font-weight: 200;
+    font-size: 25px;
+  }
+
+.button {
+    margin: 20px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    background: var(--cream);
+    color: var(--secondary)
+  }
+
+
+.button:hover {
+    cursor: pointer;
+    background: var(--light);
+    opacity: .9;
+    transform: scale(1.05)
+}
+
+.button:active {
+    transform: scale(.99);
+    transform: translateY(2px)
+}
+
+/* Moving classes */
+
+.rotate {
+    animation: rotate 9s linear infinite;
+}
+
+.pulsate {
+    animation: pulsate 9s linear infinite;
+}  
+
+
+@keyframes rotate {
+    0% {
+        transform: rotate(-360deg)
+    }
+}
+
+@keyframes pulsate {
+    0% {
+        transform: scale(1)
+    }
+    33% { 
+        transform: scale(1.1)}
+    66% { 
+        transform: scale(1.1)}
+    100% { 
+         transform: scale(1)}
+}
+
+/* Media Queries */
+
+@media screen and (max-width: 420px) {
+    .meditation-button {
+        width: 250px;
+        height: 250px;
+    }
+}
