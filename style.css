@@ -167,6 +167,14 @@ html {
     animation: pulsate 9s linear infinite;
 }  
 
+.fade-in {
+    animation: fade-in 3s ease-in;
+}
+
+.fade-out {
+    animation: fade-out 3s ease-in;
+}
+
 
 @keyframes rotate {
     0% {
@@ -185,6 +193,16 @@ html {
     100% { 
          transform: scale(1)}
 }
+
+@keyframes fade-in{
+    0% {opacity: 0}
+    50%  {opacity: 1}
+} 
+
+@keyframes fade-out {
+    0% {opacity: 1}
+    100%  {opacity: 0}
+} 
 
 /* Media Queries */
 
