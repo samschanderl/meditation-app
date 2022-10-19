@@ -5,9 +5,12 @@ const startBtn = document.querySelector('#startBtn');
 const oceanBtn = document.querySelector('#oceanBtn');
 const forestBtn = document.querySelector('#forestBtn');
 const soundBtns = document.getElementsByClassName('soundBtn');
+const rangeSlider = document.getElementById('range-slider');
+const rangeCurrent = document.getElementById('range-current');
 
 let meditationOn = false;
 let countingDown = false;
+let duration;
 
 // define interval and timeouts to stop them later correctly
 let interval;
@@ -18,8 +21,7 @@ let breatheOutTime;
 let fadeOut;
 let fadeIn;
 
-// var audio = new Audio();
-// console.log(audio)
+
 const oceanSounds = '/files/ocean-audio.mp3';
 const forestSounds = '/files/forest-audio.mp3';
 const rainSounds = '/files/rain-audio.mp3'
@@ -28,13 +30,23 @@ let selectedAudio = oceanSounds;
 let audioPlaying = false
 console.log(audio)
 
+// set the slider and duration for one round
+rangeCurrent.innerHTML = `${rangeSlider.value} seconds`;
+duration = rangeSlider.value
+
+rangeSlider.oninput = function() {
+    rangeCurrent.innerHTML = `${this.value} seconds`;
+    duration = this.value;
+    console.log(duration)
+}
+
 // listen to sound buttons to select audio
 for (var btn of soundBtns) {
     btn.addEventListener('click', (e) => {
         let previewTime = 3000
         audioPlaying === true;
-        console.log(e.target.parentElement.children)
-        startBtn.disabled = true;
+        console.log(e.target.parentElement.children);
+        disableButtons(startBtn);
         setTimeout(() => {
             startBtn.disabled = false;
             startBtn.style.h
@@ -46,7 +58,10 @@ for (var btn of soundBtns) {
             // fade audio in and out
             toggleAudio(1)
             setTimeout(() => {
-                toggleAudio(1, false)
+                toggleAudio(1, false);
+                setTimeout(() => {
+                    enableButtons(startBtn)
+                }, 1000);
             }, previewTime)
             // change the styles of the audio buttons
             removeButtonStyles(e)
@@ -58,7 +73,10 @@ for (var btn of soundBtns) {
             // fade audio in and out
             toggleAudio(1)
             setTimeout(() => {
-                toggleAudio(1, false)
+                toggleAudio(1, false);
+                setTimeout(() => {
+                    enableButtons(startBtn)
+                }, 1000);
             }, previewTime)
             // change the styles of the audio buttons
             removeButtonStyles(e)
@@ -67,10 +85,14 @@ for (var btn of soundBtns) {
         else if (e.target.id === 'rainBtn') {
             console.log('rain')
             audio.src = selectedAudio = rainSounds;
+            audio.currentTime = 60
             // fade audio in and out
             toggleAudio(1.5)
             setTimeout(() => {
-                toggleAudio(1.5, false)
+                toggleAudio(1.5, false);
+                setTimeout(() => {
+                    enableButtons(startBtn)
+                }, 1500);
             }, previewTime)
             // change the styles of the audio buttons
             removeButtonStyles(e)
@@ -90,6 +112,7 @@ startBtn.addEventListener('click', (e) => {
     let countDownTimer = 3
     
     if (meditationOn) {
+        disableButtons(...soundBtns);
         countDown(countDownTimer);
         setTimeout(() => {
             audio.src = '';
@@ -98,17 +121,17 @@ startBtn.addEventListener('click', (e) => {
             // playAudio();
             toggleAudio(3, true);
             startAnimation();
-            changeText(meditationOn);
-            interval = setInterval(changeText, 9000, true);
+            changeText(meditationOn, duration);
+            interval = setInterval(() => {
+                changeText(meditationOn, duration)
+            }, duration * 1000);
             countingDown = false;
         }, countDownTimer * 1000);
         ;
     }
     else if (!meditationOn){
-        // if (countingDown) {
-        //     audio.src = ''
-        // }
-        clearInterval(interval)
+        enableButtons(...soundBtns);
+        clearInterval(interval);
         clearTimeout(holdTime);
         clearTimeout(breatheOutTime);
         toggleAudio(3, false);
@@ -121,15 +144,16 @@ startBtn.addEventListener('click', (e) => {
 // MOVEMENT ANIMATIONS
 
 const startAnimation = () => {
-    timerCircle.classList.add('rotate');
-    meditationBtn.classList.add('pulsate')
+    timerCircle.style.animation = `rotate ${duration}s linear infinite`;
+    meditationBtn.style.animation = `pulsate ${duration}s linear infinite`;
     startBtn.textContent = 'Stop Meditation';
 }
 
 const stopAnimation = () => {
-    timerCircle.classList.remove('rotate');
-    meditationBtn.classList.remove('pulsate')
+    timerCircle.style.animation = ``;
+    meditationBtn.style.animation = ``;
     startBtn.textContent = 'Start Meditation';
+    meditationText.style.animation = '';
     meditationText.innerHTML = '"Breathe in..."'
 }
 
@@ -147,6 +171,22 @@ function removeButtonStyles (event) {
 function addButtonStyle (event) {
     event.target.classList.add('button-transparent--active')
 } 
+
+function disableButtons(...buttons) {
+    console.log('number of arguments: ', buttons.length)
+    for (var button of buttons) {
+        button.classList.add('disabled');
+        button.disabled = true;
+    }
+}
+
+function enableButtons(...buttons) {
+    console.log('number of arguments: ', buttons.length)
+    for (var button of buttons) {
+        button.classList.remove('disabled');
+        button.disabled = false;
+    }
+}
 
 // AUDIO CONTROLS
 
@@ -167,6 +207,7 @@ function toggleAudio(seconds, play=true) {
     if (play) {
         audio.volume = startVolume;
         audio.play();
+        
         fadeIn = setInterval(() => {
             // testing audio output
             console.log('playing audio')
@@ -177,9 +218,11 @@ function toggleAudio(seconds, play=true) {
             startVolume = startVolume + (1/increments)
             audio.volume =  startVolume 
             count ++;
+            // if (audio.volumne >= 0.6) {
+            //     clearInterval(fadeIn)
+            // }
             if (count === increments) {
-                clearInterval(fadeIn)
-            }
+                clearInterval(fadeIn)}
         }, time)
         audio.loop = true;
     }
@@ -195,8 +238,8 @@ function toggleAudio(seconds, play=true) {
             console.log('Volume: ', audio.volume)
             count ++;
             if (count === increments) {
-                clearInterval(fadeOut)
-                audio.src = oceanSounds
+                clearInterval(fadeOut);
+                audio.src = oceanSounds;
             }
         }, time)
     }
@@ -242,25 +285,22 @@ function countDown (seconds) {
     }, 2000)
 }
 
-function changeText (val=false) {
+function changeText (val=false, time) {
 
     if (val === true) {
-    // first 3 seconds
-    meditationText.innerHTML = '"Breathe in..."'
-    meditationText.classList.remove('fade-out');
-    meditationText.classList.add('fade-in')
-    // seconds 3 to 6
+    // first part
+    meditationText.innerHTML = '"Breathe in..."';
+    meditationText.style.animation = `fade-in ${time/2}s ease-in`
+    
+    // seconds part
     holdTime = setTimeout(() => {
-        meditationText.classList.remove('fade-in');
-        meditationText.innerHTML = '"Hold..."';
-        
-    }, 3000);
-    // seconds 6 to 9
+        meditationText.innerHTML = '"Hold..."';   
+    }, time * 1000 / 3);
+    // third part
     breatheOutTime = setTimeout(() => {
         meditationText.innerHTML = '"Breathe Out..."'
-        meditationText.classList.remove('fade-in');
-        meditationText.classList.add('fade-out');
-    }, 6000);
+        meditationText.style.animation = `fade-out ${time/2}s ease-out`;
+    }, time * 1000 / 3 * 2);
     }
     else {
         meditationText.innerHTML = '"Breathe in..."';
